@@ -3,21 +3,58 @@ const ObjectId = require('mongodb').ObjectId;
 
 const getAllLocations = async (req, res) => {
     //#swagger.tags=['Locations']
-    const result = await mongodb.getDatabase().db('project2').collection('locations').find();
-    result.toArray().then((locations) => {
-        res.setHeader('Content-Type', 'application/json');
-        res.status(200).json(locations);
-    });
+    mongodb
+        .getDatabase()
+        .db('project2')
+        .collection('locations')
+        .find()
+        .toArray((err,lists) => {
+            if (err) {
+                res.status(400).json({ message: err });
+            }
+            res.setHeader('Content-Type', 'application/json');
+            res.status(200).json(lists);
+        });
+
+    // try {
+    //     const result = await mongodb.getDatabase().db('project2').collection('locations').find();
+    //     result.toArray().then((locations) => {
+    //         res.setHeader('Content-Type', 'application/json');
+    //         res.status(200).json(locations);
+    //     });
+    // } catch {
+    //     console.error('Error fetching all locations:', error);
+    //     res.status(500).json({ message: 'An error occurred while retrieving locations.' });
+    // }
 };
 
 const getSingleLocation = async (req, res) => {
     //#swagger.tags=['Locations']
     const locationId = new ObjectId(req.params.id);
-    const result = await mongodb.getDatabase().db('project2').collection('locations').find({ _id: locationId });
-    result.toArray().then((locations) => {
-        res.setHeader('Content-Type', 'application/json');
-        res.status(200).json(locations[0]);
-    });
+    mongodb
+        .getDatabase()
+        .db()
+        .collection('locations')
+        .find({ _id: locationId })
+        .toArray((err, result) => {
+            if (err) {
+                res.status(400).json({ message: err});
+            }
+            res.setHeader('Content-Type', 'application/json');
+            res.status(200).json(result[0]);
+        })
+        
+    // try {
+    //     const locationId = new ObjectId(req.params.id);
+    //     const result = await mongodb.getDatabase().db('project2').collection('locations').find({ _id: locationId });
+    //     result.toArray().then((locations) => {
+    //         res.setHeader('Content-Type', 'application/json');
+    //         res.status(200).json(locations[0]);
+    //     });
+    // } catch {
+    //     console.error('Error fetching location by ID:', error);
+    //     res.status(500).json({ message: 'An error occurred while retrieving the location.' });
+    // }
 };
 
 const createLocation = async (req, res) => {
