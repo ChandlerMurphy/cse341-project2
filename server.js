@@ -27,5 +27,3 @@ mongodb.initDb((err) => {
         app.listen(port, () => {console.log(`Database is listening and Node running on port ${port}`)});
     }
 });
-
-// cse341-project2-089k.onrender.com
