@@ -3,19 +3,6 @@ const ObjectId = require('mongodb').ObjectId;
 
 const getAllLocations = async (req, res) => {
     //#swagger.tags=['Locations']
-    // mongodb
-    //     .getDatabase()
-    //     .db('project2')
-    //     .collection('locations')
-    //     .find()
-    //     .toArray((err,lists) => {
-    //         if (err) {
-    //             res.status(400).json({ message: err });
-    //         }
-    //         res.setHeader('Content-Type', 'application/json');
-    //         res.status(200).json(lists);
-    //     });
-
     try {
         const result = await mongodb.getDatabase().db('project2').collection('locations').find();
         result.toArray().then((locations) => {
@@ -30,20 +17,6 @@ const getAllLocations = async (req, res) => {
 
 const getSingleLocation = async (req, res) => {
     //#swagger.tags=['Locations']
-    // const locationId = new ObjectId(req.params.id);
-    // mongodb
-    //     .getDatabase()
-    //     .db()
-    //     .collection('locations')
-    //     .find({ _id: locationId })
-    //     .toArray((err, result) => {
-    //         if (err) {
-    //             res.status(400).json({ message: err});
-    //         }
-    //         res.setHeader('Content-Type', 'application/json');
-    //         res.status(200).json(result[0]);
-    //     })
-        
     try {
         const id = req.params.id;
 
@@ -66,62 +39,81 @@ const getSingleLocation = async (req, res) => {
 
 const createLocation = async (req, res) => {
     //#swagger.tags=['Locations']
-    const location = {
+    try {
+        const location = {
         name: req.body.name,
         city: req.body.city,
         state: req.body.state,
         country: req.body.country,
         size: req.body.size
-    };
-    const response = await mongodb.getDatabase().db('project2').collection('locations').insertOne(location);
-    if (response.acknowledged) {
-        res.status(204).send();
-    } else {
-        res.status(500).json(response.error || 'Some error occurred while creating the location.')
+        };
+
+        const response = await mongodb.getDatabase().db('project2').collection('locations').insertOne(location);
+        if (response.acknowledged) {
+            res.status(204).send();
+        } else {
+            res.status(500).json(response.error || 'Some error occurred while creating the location.')
+        }
+    } catch (error) {
+        console.error('Error creating location: ', error);
+        res.status(500).json({ message: 'An error occurred while creating the location' });
     }
+
 };
 
 const updateLocation = async (req, res) => {
     //#swagger.tags=['Locations']
-    const id = req.params.id;
+    try {
+        const id = req.params.id;
 
-    if (!ObjectId.isValid(id)) {
-    res.status(400).json('Must use a valid location id to update a location.');
+        if (!ObjectId.isValid(id)) {
+        res.status(400).json('Must use a valid location id to update a location.');
+        }
+
+        const locationId = new ObjectId(id);
+
+        const location = {
+            name: req.body.name,
+            city: req.body.city,
+            state: req.body.state,
+            country: req.body.country,
+            size: req.body.size
+        };
+        const response = await mongodb.getDatabase().db('project2').collection('locations').replaceOne({ _id: locationId }, location);
+        if (response.modifiedCount > 0) {
+            res.status(204).send();
+        } else {
+            res.status(500).json(response.error || 'Some error occurred while updating the location.');
+        };
+    } catch (error) {
+        console.error('Error updating location: ', error);
+        res.status(500).json({ message: 'An error occured while updating the location'});
     }
 
-    const locationId = new ObjectId(id);
-
-    const location = {
-        name: req.body.name,
-        city: req.body.city,
-        state: req.body.state,
-        country: req.body.country,
-        size: req.body.size
-    };
-    const response = await mongodb.getDatabase().db('project2').collection('locations').replaceOne({ _id: locationId }, location);
-    if (response.modifiedCount > 0) {
-        res.status(204).send();
-    } else {
-        res.status(500).json(response.error || 'Some error occurred while updating the location.');
-    };
 };
 
 const deleteLocation = async (req, res) => {
     //#swagger.tags=['Locations']
-    const id = req.params.id;
+    try {
+        const id = req.params.id;
 
-    if (!ObjectId.isValid(id)) {
-    res.status(400).json('Must use a valid location id to delete a location.');
+        if (!ObjectId.isValid(id)) {
+        res.status(400).json('Must use a valid location id to delete a location.');
+        }
+
+        const locationId = new ObjectId(id);
+
+        const response = await mongodb.getDatabase().db('project2').collection('locations').deleteOne({ _id: locationId });
+        if (response.deletedCount > 0) {
+            res.status(204).send();
+        } else {
+            res.status(500).json(response.error || 'Some error occurred while updating the location.');
+        };
+    } catch (error) {
+        console.error('Error deleting location: ', error);
+        res.status(500).json({ message: 'An error ocurred while deleting the location'});
     }
 
-    const locationId = new ObjectId(id);
-
-    const response = await mongodb.getDatabase().db('project2').collection('locations').deleteOne({ _id: locationId });
-    if (response.deletedCount > 0) {
-        res.status(204).send();
-    } else {
-        res.status(500).json(response.error || 'Some error occurred while updating the location.');
-    };
 };
 
 module.exports = {
