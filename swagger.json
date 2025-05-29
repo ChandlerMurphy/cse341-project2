@@ -88,6 +88,16 @@
                   "format": "date",
                   "description": "Birthday of the contact",
                   "example": "1990-01-01"
+                },
+                "location": {
+                  "type": "string",
+                  "description": "The location of the contact",
+                  "example": "Utah"
+                },
+                "sidekick": {
+                  "type": "string",
+                  "description": "The name of the contact's sidekick",
+                  "example": "Jane Doe"
                 }
               },
               "required": [
@@ -95,7 +105,9 @@
                 "lastName",
                 "email",
                 "favoriteColor",
-                "birthday"
+                "birthday",
+                "location",
+                "sidekick"
               ]
             }
           }
@@ -168,6 +180,12 @@
                 },
                 "birthday": {
                   "example": "1990-01-01"
+                },
+                "location": {
+                  "example": "Utah"
+                },
+                "sidekick": {
+                  "example": "Jane Doe"
                 }
               }
             }
